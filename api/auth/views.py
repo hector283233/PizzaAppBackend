@@ -5,6 +5,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth.hashers import make_password
@@ -119,3 +120,39 @@ def userDetail(request):
     serializer = UserDetailSerializer(user)
     return Response({"response":"success","data":serializer.data},
                     status=status.HTTP_200_OK)
+
+# ====== USER UPDATE ====== #
+class UserUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+    @swagger_auto_schema(
+        operation_summary="Update user profile",
+        request_body=ProfileUpdateSerializer,
+        responses={200: UserDetailSerializer},
+    )
+    def put(self, request):
+        user = request.user
+        data = request.data
+        data._mutable = True
+        data['user'] = user.id
+        data._mutable = False
+        profile = Profile.objects.get(user=user)
+        serializer = ProfileUpdateSerializer(profile, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            user_serializer = UserDetailSerializer(user)
+            return Response({"response":"success", "data": user_serializer.data})
+        else:
+            return Response({"response":"success", "message": MSG_PARAMETERS_INSUFFICIENT})
+        
+
+# ====== USER DELETE ====== #
+class UserDeleteView(APIView):
+    permission_classes=[IsAuthenticated]
+    def delete(self, request):
+        user = request.user
+        if Mobile.objects.filter(mobile=user.username).exists():
+            mobile = Mobile.objects.get(mobile=user.username)
+            mobile.delete()
+        user.delete()
+        return Response({"response":"success", "message":"User deleted."})

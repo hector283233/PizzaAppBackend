@@ -17,7 +17,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['-order']
+        ordering = ['order']
 
 class Product(models.Model):
     is_active = models.BooleanField(default=True, 
@@ -218,6 +218,7 @@ class Info(models.Model):
     class Meta:
         verbose_name = "Инфо"
         verbose_name_plural = "Инфо"
+        ordering =["-id"]
 
 class Banner(models.Model):
     TYPE = [
@@ -235,6 +236,27 @@ class Banner(models.Model):
     class Meta:
         verbose_name = "Баннер"
         verbose_name_plural = "Баннеры"
+        ordering = ["-id"]
         
 class Settings(models.Model):
     delivery_price = models.FloatField(default=0, verbose_name="Цена доставки")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Настройка"
+        verbose_name_plural = "Настройки"
+        ordering = ["-id"]
+    
+    def __str__(self):
+        return str(self.created_at)
+    
+class PushImage(models.Model):
+    image = models.ImageField("Фото", upload_to='banners/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Фото Пуш"
+        verbose_name_plural = "Фото Пуш"
+    
+    def __str__(self):
+        return str(self.created_at)
