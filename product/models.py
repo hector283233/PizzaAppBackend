@@ -31,6 +31,9 @@ class Product(models.Model):
                                 verbose_name="Описание (tm)")
     description_ru = models.TextField(null=True, blank=True, 
                                 verbose_name="Описание (ru)")
+    is_new = models.BooleanField(default=False, verbose_name="Новый?")
+    is_special = models.BooleanField(default=False, verbose_name="Специальный?")
+    is_cheap = models.BooleanField(default=False, verbose_name="Дешевый?")
     image1 = models.ImageField(upload_to='product/', blank=True, null=True,
                                 verbose_name='Фото 1')
     image2 = models.ImageField(upload_to='product/', blank=True, null=True,
@@ -66,7 +69,9 @@ class ProductSizePrice(models.Model):
                                 verbose_name="Продукт", 
                                 related_name="product_psp")
     price = models.FloatField(default=0, verbose_name="Цена")
-    size = models.CharField(max_length=32, verbose_name='Размер',
+    size_tm = models.CharField(max_length=32, verbose_name='Размер (tm)',
+                            null=True, blank=True)
+    size_ru = models.CharField(max_length=32, verbose_name='Размер (ru)',
                             null=True, blank=True)
     purchase_count = models.IntegerField(default=0, 
                                 verbose_name='Количество покупок')

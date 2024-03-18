@@ -33,3 +33,9 @@ class GeneralInfo(APIView):
                              "banners": serializer_banner.data,
                              "settings": serializer_settings.data,
                          }})
+
+class ProductFilter(APIView):
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductListSerializer(products, many=True)
+        return Response({"response":"success", "data": serializer.data})
