@@ -10,7 +10,7 @@ from django.db.models import Q
 from .serializers import *
 from GlobalVariables import *
 
-from product.models import (Category, Info)
+from product.models import (Category, Info, Group)
 from user.models import User
 
 class GeneralInfo(APIView):
@@ -39,3 +39,9 @@ class ProductFilter(APIView):
         products = Product.objects.all()
         serializer = ProductListSerializer(products, many=True)
         return Response({"response":"success", "data": serializer.data})
+
+class ComboFilter(APIView):
+    def get(self, request):
+        groups = Group.objects.all()
+        serializer = GroupListSerializer(groups, many=True)
+        return Response({'response': 'success', 'data': serializer.data})

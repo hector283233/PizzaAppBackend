@@ -12,7 +12,7 @@ class Category(models.Model):
     order = models.IntegerField(default=1, verbose_name="Порядок")
 
     def __str__(self):
-        return self.title_tm
+        return self.title_ru
     
     class Meta:
         verbose_name = "Категория"
@@ -54,7 +54,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title_tm
+        return self.title_ru
     
     class Meta:
         verbose_name = "Продукт"
@@ -83,7 +83,7 @@ class ProductSizePrice(models.Model):
                                          verbose_name="Эквалент баллами")
 
     def __str__(self):
-        return str(self.product.title_tm) + ' - ' + str(self.price)
+        return str(self.product.title_ru) + ' - ' + str(self.price)
     
     class Meta:
         verbose_name = "Продукт Цена"
@@ -115,7 +115,7 @@ class Group(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.title_tm
+        return self.title_ru
     
     class Meta:
         verbose_name = "Комбо"
@@ -124,6 +124,18 @@ class Group(models.Model):
         indexes = [
             models.Index(fields=['updated_at']),
         ]
+
+class RelatedProducts(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,
+                                verbose_name="Продукт",
+                                related_name="related_product")
+    related_product = models.ForeignKey(Product, on_delete=models.SET_NULL,
+                                        blank=True, null=True, 
+                                        verbose_name="Похожий продукт",
+                                        related_name="rel_prod")
+    
+    # def __str__(self):
+    #     return str(self.product.title_ru)
 
 class Order(models.Model):
     ORDER_STATUS = [
@@ -198,7 +210,7 @@ class OrderItem(models.Model):
                                          verbose_name="Эквалент баллами")
     
     def __str__(self):
-        return str(self.product.title_tm)
+        return str(self.product.title_ru)
     
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -245,6 +257,21 @@ class Banner(models.Model):
         
 class Settings(models.Model):
     delivery_price = models.FloatField(default=0, verbose_name="Цена доставки")
+    amount_min = models.IntegerField(default=0, verbose_name="Мин на бесплатную доставку")
+    ref_add_point = models.IntegerField(default=5, verbose_name='балл для реферала')
+    r_image = models.ImageField(upload_to='banners/', verbose_name='Фото для 1',
+                                null=True, blank=True)
+    r_title_tm = models.CharField(max_length=64, null=True, blank=True)
+    r_title_ru = models.CharField(max_length=64, null=True, blank=True)
+    r_content_tm = models.CharField(max_length=128, null=True, blank=True)
+    r_content_ru = models.CharField(max_length=128, null=True, blank=True)
+    nr_image = models.ImageField(upload_to='banners/', verbose_name='Фото для 1',
+                                 null=True, blank=True)
+    nr_title_tm = models.CharField(max_length=64, null=True, blank=True)
+    nr_title_ru = models.CharField(max_length=64, null=True, blank=True)
+    nr_content_tm = models.CharField(max_length=128, null=True, blank=True)
+    nr_content_ru = models.CharField(max_length=128, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
